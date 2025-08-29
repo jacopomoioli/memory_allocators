@@ -16,14 +16,6 @@ static char* allocp = allocbuf;
 char* alloc(int size);
 void afree(char* pointer);
 
-int main(int argc, char** argv){
-    char* pointer = alloc(10);
-    printf("Base addr: 0x%p\nNext base addr: 0x%p\n\n", pointer, allocp);
-    afree(pointer);
-    printf("Base addr: 0x%p\nNext base addr: 0x%p\n\n", pointer, allocp);
-
-    return 0;
-}
 
 char* alloc(int size){
     if((allocp + size) > (allocbuf + ALLOCSIZE)){
@@ -35,4 +27,13 @@ char* alloc(int size){
 
 void afree(char* pointer){
     allocp = pointer;
+}
+
+int main(int argc, char** argv){
+    char* pointer = alloc(10);
+    printf("Base addr: 0x%p\nNext base addr: 0x%p\n\n", pointer, allocp);
+    afree(pointer);
+    printf("Base addr: 0x%p\nNext base addr: 0x%p\n\n", pointer, allocp);
+
+    return 0;
 }

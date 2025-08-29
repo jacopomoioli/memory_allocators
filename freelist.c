@@ -155,6 +155,4 @@ int main(int argc, char** argv){
     printf("ptr2: %p\n", ptr2);
     printf("ptr3: %p\n", ptr3);
     memfree(ptr1);
-    memfree(ptr2);
-    memfree(ptr3);
 }

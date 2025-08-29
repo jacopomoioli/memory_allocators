@@ -2,7 +2,10 @@
  * Free list Allocator w Next Fit
  */
 
+#include <unistd.h>
+
 #define NULL ((void*)0)
+#define OS_ALLOCATION_SIZE 1024
 
 typedef long Align;
 
@@ -20,9 +23,38 @@ static Header base;
 
 static Header* free_block = NULL;
 
+static void free(Header* block){
+    Header* header = block - 1;
+    if (free_block == NULL){    // free list is blank
+        header->s.next_block = &base;
+        base.s.next_block = header;
+        free_block = &base;
+        return NULL;
+    }
+    header->s.next_block = free_block->s.next_block;
+    free_block->s.next_block = header;
+    return NULL;
+}
+
+static Header* request_memory(unsigned bytes_required) {
+    void* new_memory_pointer;
+    Header* new_memory_header;
+    if (bytes_required < OS_ALLOCATION_SIZE){
+        bytes_required = OS_ALLOCATION_SIZE;
+    }
+    new_memory_pointer = sbrk(bytes_required);
+    if (new_memory_pointer == (char *) -1){
+        return NULL;
+    }
+    new_memory_header = (Header*)new_memory_pointer;
+    new_memory_header->s.size = bytes_required;     // bytes_required is memalloc's needed_units, which includes the header size
+    free(new_memory_header+1);
+    return free_block;
+}
+
 void* memalloc(unsigned bytes_required){
     Header* current_block;
-    Header *previous_block;
+    Header* previous_block;
     Header* request_memory(unsigned);
     unsigned needed_units;
 
